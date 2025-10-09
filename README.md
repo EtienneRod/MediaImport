@@ -1,4 +1,4 @@
-This is a python script to automatically manage labeling in Plex at new media import and remove unwanted french track when more than one french track exists in a media during 
+This is a python script to automatically manage labeling in Plex and remove unwanted french track when more than one french track exists in a media during 
 import in Radarr.
 
 This use Webhooks from both Plex and Radarr in order to do so.
