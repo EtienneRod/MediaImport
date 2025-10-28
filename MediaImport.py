@@ -26,10 +26,10 @@ app = Flask(__name__)
 def plex_webhook():
     data = json.loads(request.form['payload'])
     if data["event"] == "library.new": # verify if Webhook has been reached bacause of a Plex new item
+        from plexapi.server import PlexServer
+        myplex = PlexServer(plexUrl,plexToken)
         if data["Metadata"]["librarySectionTitle"]=="Movies": # verify if it's a movie
             logging.info("Labeling Movies...")
-            from plexapi.server import PlexServer
-            myplex = PlexServer(plexUrl,plexToken)
             for media in myplex.library.section("Movies").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":["G","PG","TV-G","TV-PG","TV-Y","ca/G","ca/PG","ca/TV-PG","ca/TV-Y7"],"audioLanguage|":["French","french-canadian"]}): # Add Enfants label to movies for kids
                 media.addLabel("Enfants",locked=False)
                 logging.info(f"Adding Enfants label to movie : {media.title}")
