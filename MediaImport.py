@@ -17,7 +17,6 @@ pushoverKey=f"{os.environ.get('PUSHOVER_KEY')}"
 pushoverToken=f"{os.environ.get('PUSHOVER_TOKEN')}"
 flaskPort=f"{os.environ.get('FLASK_PORT')}"
 commonsenseage=int(f"{os.environ.get('COMMONSENSE_AGE')}")
-print(f"{commonsenseage}")
 
 
 # Define Flask
