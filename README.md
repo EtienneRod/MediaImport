@@ -24,6 +24,6 @@ services:
       - FLASK_PORT=5000 # Optional, Default to 5000. Set Flask port inside contrainer, make sure this port is forwarded
       - CONTENT_RATING="G,PG,TV-G,TV-PG,TV-Y,ca/G,ca/PG,ca/TV-PG,ca/TV-Y7" # Optionnal, Default to "G,PG,TV-G,TV-PG,TV-Y,ca/G,ca/PG,ca/TV-PG,ca/TV-Y7". Content rating neede to label Enfant based on Plex content rating filters
       - COMMONSENSE_AGE=12 # Optional, Default to 12. Maximum Common Sense Age Rating in order to add label Enfant
-      - AUDIO_LANGUAUGE="French,french-canadian" #Optionnal, Default to "French,french-canadian". Language needed to add label Enfant
+      - AUDIO_LANGUAGE="French,french-canadian" #Optionnal, Default to "French,french-canadian". Language needed to add label Enfant
     volumes:
       - /mnt/Share/Medias:/mnt/Share/Medias  # Required. Change to your Media root folder
