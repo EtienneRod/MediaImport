@@ -30,8 +30,8 @@ def plex_webhook():
     if data["event"] == "library.new":
         from plexapi.server import PlexServer
         myplex = PlexServer(plexUrl,plexToken)
-        medias = myplex.library.section("Movies").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":f"{contentrating}"})
-        medias = medias + myplex.library.section("Movies").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":f"{contentrating}","audioLanguage|":f"{audiolanguage}"})
+        medias = myplex.library.section("Movies").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":contentrating})
+        medias = medias + myplex.library.section("Movies").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":contentrating,"audioLanguage|":audiolanguage})
         for media in medias:
             label = False
             if media.commonSenseMedia != None:
