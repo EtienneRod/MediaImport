@@ -31,7 +31,7 @@ def plex_webhook():
         from plexapi.server import PlexServer
         myplex = PlexServer(plexUrl,plexToken)
         medias = myplex.library.section("Movies").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":f"{contentrating}"})
-        medias = medias + myplex.library.section("Movies").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":f"{contentrating}","audioLanguage|":f"{audiolanguage}})
+        medias = medias + myplex.library.section("Movies").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":f"{contentrating}","audioLanguage|":f"{audiolanguage}"})
         for media in medias:
             label = False
             if media.commonSenseMedia != None:
