@@ -22,6 +22,6 @@ services:
       - PUSHOVER_KEY="abc123" # Required. Change to your Pushover key
       - PUSHOVER_TOKEN="abc123" # Required. Change to your Pushover token
       - FLASK_PORT=5000 # Optional, Default to 5000. Set Flask port inside contrainer, make sure this port is forwarded
-      - COMMONSENSE_AGE=12
+      - COMMONSENSE_AGE=12 # Optional, default to 12. Maximum Common Sense Age Rating in order to add label Enfant
     volumes:
       - /mnt/Share/Medias:/mnt/Share/Medias  # Required. Change to your Media root folder
