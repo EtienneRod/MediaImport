@@ -42,6 +42,7 @@ def plex_webhook():
                 logging.info(f"Adding Enfants label to : {media.title}")
                 pushover=PushoverAPI(pushoverToken)
                 pushover.send_message(pushoverKey, f"Label Enfants added to : {media.title}", title="MediaImport")
+        logging.info(f"Completed labeling}")
     return ''
 
 # Define Radarr Webhook listener
