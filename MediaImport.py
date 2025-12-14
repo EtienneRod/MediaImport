@@ -30,18 +30,18 @@ def plex_webhook():
         myplex = PlexServer(plexUrl,plexToken)
         medias = myplex.library.section("Movies").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":["G","PG","TV-G","TV-PG","TV-Y","ca/G","ca/PG","ca/TV-PG","ca/TV-Y7"],"audioLanguage|":["French","french-canadian"]})
         medias = medias + myplex.library.section("Movies").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":["G","PG","TV-G","TV-PG","TV-Y","ca/G","ca/PG","ca/TV-PG","ca/TV-Y7"],"audioLanguage|":["French","french-canadian"]})
-            for media in medias:
-                label = False
-                if media.commonSenseMedia != None:
-                    if media.commonSenseMedia.ageRatings[0].age < 12:
-                        label = True
-                else:
+        for media in medias:
+            label = False
+            if media.commonSenseMedia != None:
+                if media.commonSenseMedia.ageRatings[0].age < 12:
                     label = True
-                if label == True:
-                    media.addLabel("Enfants",locked=False)
-                    logging.info(f"Adding Enfants label to : {media.title}")
-                    pushover=PushoverAPI(pushoverToken)
-                    pushover.send_message(pushoverKey, f"Label Enfants added to : {media.title}", title="MediaImport")
+            else:
+                label = True
+            if label == True:
+                media.addLabel("Enfants",locked=False)
+                logging.info(f"Adding Enfants label to : {media.title}")
+                pushover=PushoverAPI(pushoverToken)
+                pushover.send_message(pushoverKey, f"Label Enfants added to : {media.title}", title="MediaImport")
     return ''
 
 # Define Radarr Webhook listener
