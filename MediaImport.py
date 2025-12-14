@@ -25,23 +25,23 @@ app = Flask(__name__)
 @app.route("/webhook/plex",methods=["GET","POST"])
 def plex_webhook():
     data = json.loads(request.form['payload'])
-    if data["event"] == "library.new": # verify if Webhook has been reached bacause of a Plex new item
+    if data["event"] == "library.new":
         from plexapi.server import PlexServer
         myplex = PlexServer(plexUrl,plexToken)
-        if data["Metadata"]["librarySectionTitle"]=="Movies": # verify if it's a movie
-            logging.info("Labeling Movies...")
-            for media in myplex.library.section("Movies").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":["G","PG","TV-G","TV-PG","TV-Y","ca/G","ca/PG","ca/TV-PG","ca/TV-Y7"],"audioLanguage|":["French","french-canadian"]}): # Add Enfants label to movies for kids
-                media.addLabel("Enfants",locked=False)
-                logging.info(f"Adding Enfants label to movie : {media.title}")
-                pushover=PushoverAPI(pushoverToken)
-                pushover.send_message(pushoverKey, f"Label Enfants added to movie : {media.title}", title="MediaImport")
-        elif data["Metadata"]["librarySectionTitle"]=="TV Shows": # verify if it's a TV Show
-            logging.info("Labeling TV Show...")
-            for media in myplex.library.section("TV Shows").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":["G","PG","TV-G","TV-PG","TV-Y","ca/G","ca/PG","ca/TV-PG","ca/TV-Y7"],"audioLanguage|":["French","french-canadian"]}): # Add Enfants label to TV Shows for kids
-                media.addLabel("Enfants",locked=False)
-                logging.info(f"Adding Enfants label to TV show : {media.title}")
-                pushover = PushoverAPI(pushoverToken)
-                pushover.send_message(pushoverKey, f"Label Enfants added to TV show {media.title}", title="MediaImport")
+        medias = myplex.library.section("Movies").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":["G","PG","TV-G","TV-PG","TV-Y","ca/G","ca/PG","ca/TV-PG","ca/TV-Y7"],"audioLanguage|":["French","french-canadian"]})
+        medias = medias + myplex.library.section("Movies").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":["G","PG","TV-G","TV-PG","TV-Y","ca/G","ca/PG","ca/TV-PG","ca/TV-Y7"],"audioLanguage|":["French","french-canadian"]})
+            for media in medias:
+                label = False
+                if media.commonSenseMedia != None:
+                    if media.commonSenseMedia.ageRatings[0].age < 12:
+                        label = True
+                else:
+                    label = True
+                if label == True:
+                    media.addLabel("Enfants",locked=False)
+                    logging.info(f"Adding Enfants label to : {media.title}")
+                    pushover=PushoverAPI(pushoverToken)
+                    pushover.send_message(pushoverKey, f"Label Enfants added to : {media.title}", title="MediaImport")
     return ''
 
 # Define Radarr Webhook listener
