@@ -19,8 +19,8 @@ flaskPort=f"{os.environ.get('FLASK_PORT')}"
 contentrating=f"{os.environ.get('CONTENT_RATING')}".split(',')
 commonsenseage=int(f"{os.environ.get('COMMONSENSE_AGE')}")
 audiolanguage=f"{os.environ.get('AUDIO_LANGUAGE')}".split(',')
-print(f{contentrating})
-print(f{audiolanguage})
+print(f"{contentrating}")
+print(f"{audiolanguage}")
 
 
 # Define Flask
