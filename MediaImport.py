@@ -16,7 +16,7 @@ plexToken=f"{os.environ.get('PLEX_TOKEN')}"
 pushoverKey=f"{os.environ.get('PUSHOVER_KEY')}"
 pushoverToken=f"{os.environ.get('PUSHOVER_TOKEN')}"
 flaskPort=f"{os.environ.get('FLASK_PORT')}"
-commonsenseage=int({os.environ.get('COMMONSENSE_AGE')})
+commonsenseage=int(f"{os.environ.get('COMMONSENSE_AGE')}")
 
 
 # Define Flask
