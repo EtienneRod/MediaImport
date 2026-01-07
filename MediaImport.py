@@ -31,7 +31,8 @@ def plex_webhook():
         from plexapi.server import PlexServer
         myplex = PlexServer(plexUrl,plexToken)
         medias = myplex.library.section("Movies").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":contentrating})
-        medias = medias + myplex.library.section("Movies").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":contentrating,"audioLanguage|":audiolanguage})
+        medias = medias + myplex.library.section("TV Shows").search(filters =
+                        {"label!":["Enfants","Exclude"],"contentRating|":contentrating,"audioLanguage|":audiolanguage})
         for media in medias:
             label = False
             if media.commonSenseMedia != None:
@@ -53,38 +54,21 @@ def radarr_webhook():
     data = request.json
     if "Test Title" not in  data["movie"]["title"]: # If this is a Test from Radarr GUI, if yes, don't proceed
         if "[VF2]" in data["movieFile"]["relativePath"]: # Verify if [VF2] in file name, if yes, extract streams from file
-            result = subprocess.check_output([
-                f"ffprobe",
-                f"-v",
-                f"quiet",
-                f"-print_format",
-                f"json",
-                f"-show_streams",
-                f"-i",
-                f"{data['movieFile']['path']}",
-            ])
-            probe_output = json.loads(result)
+            result = subprocess.run([f"ffprobe -v quiet -print_format json -show_streams -i {data['movieFile']['path']}"],
+                                    capture_output=True, text=True, shell=True)
+            probe_output = json.loads(result.stdout)
+            logging.info(f"{probe_output}")
             streams = probe_output["streams"]
             audiovff = []
             for stream in streams:
-                if stream["codec_type"] == "audio" and any(sub in stream["tags"]["title"].lower() for sub in ["vff","france","truefrench"]) : # Verifié if streams are audio and French (France)
+                if stream["codec_type"] == "audio" and any(sub in stream["tags"]["title"].lower() for sub in
+                                          ["vff","france","truefrench"]) : # Verifié if streams are audio and French (France)
                     audiovff.append(stream["index"])
             logging.info(f"Audio Track(s) to remove : {audiovff}")
             for track in audiovff: # Remove all French (France) tracks
-                result=subprocess.call([
-                    f"ffmpeg",
-                    f"-hide_banner",
-                    f"-i",
-                    f"{data['movieFile']['path']}",
-                    f"-map",
-                    f"0",
-                    f"-map",
-                    f"-0:{track}",
-                    f"-y",
-                    f"-c",
-                    f"copy",
-                    f"{data['movie']['folderPath']}/TMP_{data['movieFile']['relativePath']}"
-                ])
+                result=subprocess.run([f"ffmpeg -hide_banner -i {data['movieFile']['path']} -map 0 -map -0:{track} -y -c copy
+                                      {data['movie']['folderPath']}/TMP_{data['movieFile']['relativePath']}"],
+                                      capture_output=True, text=True, shell=True)
                 shutil.move(f"{data['movie']['folderPath']}/TMP_{data['movieFile']['relativePath']}",f"{data['movieFile']['path']}")
                 logging.info(f"Track {track} removed from {data['movie']['title']}")
             logging.info(f"VFF removed from {data['movie']['title']}")
@@ -94,4 +78,4 @@ def radarr_webhook():
 
 # Main
 if __name__ == "__main__":
-  app.run(host="0.0.0.0", port=flaskPort, debug=True) 
+  app.run(host="0.0.0.0", port=flaskPort, debug=True)
