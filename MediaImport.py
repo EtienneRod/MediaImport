@@ -19,6 +19,7 @@ flaskPort=f"{os.environ.get('FLASK_PORT')}"
 contentrating=f"{os.environ.get('CONTENT_RATING')}".split(',')
 commonsenseage=int(f"{os.environ.get('COMMONSENSE_AGE')}")
 audiolanguage=f"{os.environ.get('AUDIO_LANGUAGE')}".split(',')
+excludedlabels=f"{os.environ.get('EXCLUDED_LABLES')}".split(',')
 
 # Define Flask
 app = Flask(__name__)
@@ -30,9 +31,16 @@ def plex_webhook():
     if data["event"] == "library.new":
         from plexapi.server import PlexServer
         myplex = PlexServer(plexUrl,plexToken)
-        medias = myplex.library.section("Movies").search(filters = {"label!":["Enfants","Exclude"],"contentRating|":contentrating})
-        medias = medias + myplex.library.section("TV Shows").search(filters =
-                        {"label!":["Enfants","Exclude"],"contentRating|":contentrating,"audioLanguage|":audiolanguage})
+        medias = myplex.library.section("Movies").search(filters = {"label!":excludedlabels,
+                                                                   "contentRating|":contentrating})
+        medias = medias + myplex.library.section("Films").search(filters = {"label!":excludedlabels,
+                                                                   "contentRating|":contentrating})
+        medias = medias + myplex.library.section("TV Shows").search(filters = {"label!":excludedlabels,
+                                                                                 "contentRating|":contentrating,
+                                                                                 "audioLanguage|":audiolanguage})
+        medias = medias + myplex.library.section("Séries TV").search(filters = {"label!":excludedlabels,
+                                                                                 "contentRating|":contentrating,
+                                                                                 "audioLanguage|":audiolanguage})
         for media in medias:
             label = False
             if media.commonSenseMedia != None:
