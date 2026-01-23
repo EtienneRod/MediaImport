@@ -53,6 +53,15 @@ def plex_webhook():
 # Define Radarr Webhook listener
 @app.route("/webhook/radarr",methods=["POST"])
 def radarr_webhook():
+    headers = dict(request.headers)
+    print("--- Headers ---")
+    for key, value in headers.items():
+        print(f"{key}: {value}")
+    print("---------------")
+    body = request.data.decode('utf-8')
+    print("--- Body ---")
+    print(f"{body}")
+    print("----------------")
     data = request.get_json(silent=True)
     if "Test Title" not in  data["movie"]["title"]: # If this is a Test from Radarr GUI, if yes, don't proceed
         if "[VF2]" in data["movieFile"]["relativePath"]: # Verify if [VF2] in file name, if yes, extract streams from file
