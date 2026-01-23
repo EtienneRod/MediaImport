@@ -15,6 +15,7 @@ plexUrl=f"http://{os.environ.get('PLEX_IP')}:{os.environ.get('PLEX_PORT')}"
 plexToken=f"{os.environ.get('PLEX_TOKEN')}"
 pushoverKey=f"{os.environ.get('PUSHOVER_KEY')}"
 pushoverToken=f"{os.environ.get('PUSHOVER_TOKEN')}"
+pushovermsg=f""
 flaskPort=f"{os.environ.get('FLASK_PORT')}"
 contentrating=f"{os.environ.get('CONTENT_RATING')}".split(',')
 commonsenseage=int(f"{os.environ.get('COMMONSENSE_AGE')}")
