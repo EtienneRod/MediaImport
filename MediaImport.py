@@ -24,63 +24,80 @@ excludedlabels=f"{os.environ.get('EXCLUDED_LABLES')}".split(',')
 # Define Flask
 app = Flask(__name__)
 
+# Function removevff
+def removevff(plex, mediaid):
+    global pushovermsg
+    media = plex.fetchItem(f"{mediaid}")
+    filename=f"{media.media[0].parts[0].file}"
+    logging.info(f"Title: {media.title} - Filename: {filename}")
+    print(repr({filename}))
+    if f"[VF2]" in f"{filename}":
+        result = subprocess.run([f"ffprobe -v quiet -print_format json -show_streams -i '{filename}'"],
+                                capture_output=True, text=True, shell=True)
+        probe_output = json.loads(result.stdout)
+        streams = probe_output["streams"]
+        audiovff = []
+        for stream in streams:
+            if stream["codec_type"] == "audio" and any(sub in stream["tags"]["title"].lower() for sub in
+                                                       ["vff","france","truefrench"]) :
+                audiovff.append(stream["index"])
+        logging.info(f"Audio Track(s) to remove : {audiovff}")
+        for track in audiovff: # Remove all French (France) tracks
+            mediapath = os.path.dirname(f"{filename}")
+            mediafilename = os.path.basename(f"{filename}")
+            logging.info(f"Path: {mediapath} - Filename: {mediafilename}")
+            result=subprocess.run(
+                    [f"ffmpeg -hide_banner -i '{filename}' -map 0 -map -0:{track} -y -c copy '{mediapath}/TMP_{mediafilename}'"],
+                    capture_output=True, text=True, shell=True)
+            shutil.move(f"{mediapath}/TMP_{mediafilename}",f"{filename}")
+            shutil.move(f"{filename}",filename.replace(f"[VF2]", f""))
+            logging.info(f"Track {track} removed from {media.title}")
+        logging.info(f"VFF removed from {media.title}")
+        pushovermsg=pushovermsg+f"VFF removed from {media.title}\n"
+
+# Function labeling
+def labeling(plex):
+    global pushovermsg
+    medias = plex.library.section("Movies").search(filters = {"label!":excludedlabels,
+                                                               "contentRating|":contentrating})
+    medias = medias + plex.library.section("Films").search(filters = {"label!":excludedlabels,
+                                                               "contentRating|":contentrating})
+    medias = medias + plex.library.section("TV Shows").search(filters = {"label!":excludedlabels,
+                                                                             "contentRating|":contentrating,
+                                                                             "audioLanguage|":audiolanguage})
+    medias = medias + plex.library.section("Séries TV").search(filters = {"label!":excludedlabels,
+                                                                             "contentRating|":contentrating,
+                                                                             "audioLanguage|":audiolanguage})
+    for media in medias:
+        label = False
+        if media.commonSenseMedia != None:
+            if media.commonSenseMedia.ageRatings[0].age <= commonsenseage:
+                label = True
+        else:
+            label = True
+        if label == True:
+            media.addLabel("Enfants",locked=False)
+            logging.info(f"Adding Enfants label to : {media.title}")
+            pushovermsg=pushovermsg+f"Label Enfants added to : {media.title}\n"
+    logging.info(f"Completed labeling")
+
 # Define Plex Webhook listener
 @app.route("/webhook/plex",methods=["GET","POST"])
 def plex_webhook():
-    data = json.loads(request.form['payload'])
-    if data["event"] == "library.new":
-        from plexapi.server import PlexServer
-        myplex = PlexServer(plexUrl,plexToken)
-        medias = myplex.library.section("Movies").search(filters = {"label!":excludedlabels, "contentRating|":contentrating})
-        medias = medias + myplex.library.section("Films").search(filters = {"label!":excludedlabels, "contentRating|":contentrating})
-        medias = medias + myplex.library.section("TV Shows").search(filters = {"label!":excludedlabels, "contentRating|":contentrating, "audioLanguage|":audiolanguage})
-        medias = medias + myplex.library.section("Séries TV").search(filters = {"label!":excludedlabels, "contentRating|":contentrating, "audioLanguage|":audiolanguage})
-        for media in medias:
-            label = False
-            if media.commonSenseMedia != None:
-                if media.commonSenseMedia.ageRatings[0].age <= commonsenseage:
-                    label = True
-            else:
-                label = True
-            if label == True:
-                media.addLabel("Enfants",locked=False)
-                logging.info(f"Adding Enfants label to : {media.title}")
-                pushover=PushoverAPI(pushoverToken)
-                pushover.send_message(pushoverKey, f"Label Enfants added to : {media.title}", title="MediaImport")
-        logging.info(f"Completed labeling")
-    return ''
-
-# Define Radarr Webhook listener
-@app.route("/webhook/radarr",methods=["POST"])
-def radarr_webhook():
     headers = dict(request.headers)
     print("--- Headers ---")
     for key, value in headers.items():
         print(f"{key}: {value}")
     print("---------------")
-    body = request.data.decode('utf-8')
-    print("--- Body ---")
-    print(f"{body}")
-    print("----------------")
-    data = request.get_json(silent=True)
-    if "Test Title" not in  data["movie"]["title"]: # If this is a Test from Radarr GUI, if yes, don't proceed
-        if "[VF2]" in data["movieFile"]["relativePath"]: # Verify if [VF2] in file name, if yes, extract streams from file
-            result = subprocess.run([f"ffprobe -v quiet -print_format json -show_streams -i {data['movieFile']['path']}"], capture_output=True, text=True, shell=True)
-            probe_output = json.loads(result.stdout)
-            logging.info(f"{probe_output}")
-            streams = probe_output["streams"]
-            audiovff = []
-            for stream in streams:
-                if stream["codec_type"] == "audio" and any(sub in stream["tags"]["title"].lower() for sub in ["vff","france","truefrench"]) : # Verifié if streams are audio and French (France)
-                    audiovff.append(stream["index"])
-            logging.info(f"Audio Track(s) to remove : {audiovff}")
-            for track in audiovff: # Remove all French (France) tracks
-                result=subprocess.run([f"ffmpeg -hide_banner -i {data['movieFile']['path']} -map 0 -map -0:{track} -y -c copy {data['movie']['folderPath']}/TMP_{data['movieFile']['relativePath']}"], capture_output=True, text=True, shell=True)
-                shutil.move(f"{data['movie']['folderPath']}/TMP_{data['movieFile']['relativePath']}", f"{data['movieFile']['path']}")
-                logging.info(f"Track {track} removed from {data['movie']['title']}")
-            logging.info(f"VFF removed from {data['movie']['title']}")
-            pushover = PushoverAPI(pushoverToken)
-            pushover.send_message(pushoverKey, f"VFF removed from {data['movie']['title']}", title="MediaImport")
+    data = json.loads(request.form['payload'])
+    if data["event"] == "library.new":
+        from plexapi.server import PlexServer
+        myplex = PlexServer(plexUrl,plexToken)
+        removevff(myplex,data["Metadata"]["key"])
+        labeling(myplex)
+        pushover = PushoverAPI(pushoverToken)
+        logging.info(f"Pushover Message to send: {pushovermsg}")
+        pushover.send_message(pushoverKey, f"{pushovermsg}", title="MediaImport")
     return ''
 
 # Main
