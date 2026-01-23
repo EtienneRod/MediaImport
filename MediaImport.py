@@ -28,6 +28,8 @@ app = Flask(__name__)
 # Function removevff
 def removevff(plex, mediaid):
     global pushovermsg
+    logging.info(f"------------------------------------------------------------")
+    logging.info(f"Starting RemoveVFF")
     media = plex.fetchItem(f"{mediaid}")
     filename=f"{media.media[0].parts[0].file}"
     logging.info(f"Title: {media.title} - Filename: {filename}")
@@ -55,10 +57,14 @@ def removevff(plex, mediaid):
             logging.info(f"Track {track} removed from {media.title}")
         logging.info(f"VFF removed from {media.title}")
         pushovermsg=pushovermsg+f"VFF removed from {media.title}\n"
+        logging.info(f"Completed RemoveVFF")
+        logging.info(f"------------------------------------------------------------")
 
 # Function labeling
 def labeling(plex):
     global pushovermsg
+    logging.info(f"------------------------------------------------------------")
+    logging.info(f"Starting Labeling")
     medias = plex.library.section("Movies").search(filters = {"label!":excludedlabels,
                                                                "contentRating|":contentrating})
     medias = medias + plex.library.section("Films").search(filters = {"label!":excludedlabels,
@@ -81,15 +87,11 @@ def labeling(plex):
             logging.info(f"Adding Enfants label to : {media.title}")
             pushovermsg=pushovermsg+f"Label Enfants added to : {media.title}\n"
     logging.info(f"Completed labeling")
+    logging.info(f"------------------------------------------------------------")
 
 # Define Plex Webhook listener
 @app.route("/webhook/plex",methods=["GET","POST"])
 def plex_webhook():
-    headers = dict(request.headers)
-    print("--- Headers ---")
-    for key, value in headers.items():
-        print(f"{key}: {value}")
-    print("---------------")
     data = json.loads(request.form['payload'])
     if data["event"] == "library.new":
         from plexapi.server import PlexServer
