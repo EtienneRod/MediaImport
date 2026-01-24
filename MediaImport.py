@@ -33,29 +33,34 @@ def removevff(plex, mediaid):
     media = plex.fetchItem(f"{mediaid}")
     filename=f"{media.media[0].parts[0].file}"
     logging.info(f"Title: {media.title} - Filename: {filename}")
-    if f"[VF2]" in f"{filename}":
-        result = subprocess.run([f"ffprobe -v quiet -print_format json -show_streams -i '{filename}'"],
-                                capture_output=True, text=True, shell=True)
-        probe_output = json.loads(result.stdout)
-        streams = probe_output["streams"]
-        audiovff = []
-        for stream in streams:
-            if stream["codec_type"] == "audio" and any(sub in stream["tags"]["title"].lower() for sub in
-                                                       ["vff","france","truefrench"]) :
-                audiovff.append(stream["index"])
-        logging.info(f"Audio Track(s) to remove : {audiovff}")
-        for track in audiovff: # Remove all French (France) tracks
-            mediapath = os.path.dirname(f"{filename}")
-            mediafilename = os.path.basename(f"{filename}")
-            logging.info(f"Path: {mediapath} - Filename: {mediafilename}")
-            result=subprocess.run(
-                    [f"ffmpeg -hide_banner -i '{filename}' -map 0 -map -0:{track} -y -c copy '{mediapath}/TMP_{mediafilename}'"],
-                    capture_output=True, text=True, shell=True)
-            shutil.move(f"{mediapath}/TMP_{mediafilename}",f"{filename}")
-            shutil.move(f"{filename}",filename.replace(f"[VF2]", f""))
-            logging.info(f"Track {track} removed from {media.title}")
-        logging.info(f"VFF removed from {media.title}")
-        pushovermsg=pushovermsg+f"VFF removed from {media.title}\n"
+    audio_streams = media.media[0].parts[0].audioStreams()
+    vfq=[]
+    notvfq=[]
+    for stream in audio_streams:
+        logging.info(f"Audio Title: {stream.title} - Language: {stream.languageCode}")
+        if stream.languageCode == f"fra":
+            if f"vfq" in f"{stream.title.lower()}":
+                vfq.append(f"{stream.index}")
+            else:
+                notvfq.append(f"{stream.index}")
+    if vfq and notvfq:
+        mapstring=""
+        for stream in notvfq:
+            mapstring=f"-map -0:{stream}"
+        mediapath = os.path.dirname(f"{filename}")
+        mediafilename = os.path.basename(f"{filename}")
+        logging.info(f"Path: {mediapath} - Filename: {mediafilename} - MapString: {mapstring}")
+        result=subprocess.run([f"ffmpeg -hide_banner -i '{filename}' -map 0 {mapstring} -y -c copy '{mediapath}/TMP_{mediafilename}'"],
+                              capture_output=True, text=True, shell=True)
+        shutil.move(f"{mediapath}/TMP_{mediafilename}",f"{filename}")
+        shutil.move(f"{filename}",filename.replace(f"[VF2]", f""))
+        pushovermsg=pushovermsg+f"None VFQ French tracks removed from {media.title}\n"
+    elif vfq and not notvfq:
+        logging.info(f"All French audio tracks are VFQ in {media.title}")
+    elif not vfq and notvfq:
+        logging.info(f"No French audio tracks are VFQ in {media.title}")
+    else:
+        logging.info(f"No French audio tracks in {media.title}")
         logging.info(f"Completed RemoveVFF")
         logging.info(f"------------------------------------------------------------")
 
