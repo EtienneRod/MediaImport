@@ -33,7 +33,6 @@ def removevff(plex, mediaid):
     media = plex.fetchItem(f"{mediaid}")
     filename=f"{media.media[0].parts[0].file}"
     logging.info(f"Title: {media.title} - Filename: {filename}")
-    print(repr({filename}))
     if f"[VF2]" in f"{filename}":
         result = subprocess.run([f"ffprobe -v quiet -print_format json -show_streams -i '{filename}'"],
                                 capture_output=True, text=True, shell=True)
