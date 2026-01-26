@@ -25,7 +25,7 @@ excludedlabels=f"{os.environ.get('EXCLUDED_LABLES')}".split(',')
 app = Flask(__name__)
 
 # Function removevff
-def removevff(plex, mediaid, pushovermsg):
+def removevff(plex, mediaid, message):
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting RemoveVFF")
     media = plex.fetchItem(f"{mediaid}")
@@ -52,7 +52,7 @@ def removevff(plex, mediaid, pushovermsg):
                               capture_output=True, text=True, shell=True)
         shutil.move(f"{mediapath}/TMP_{mediafilename}",f"{filename}")
         shutil.move(f"{filename}",filename.replace(f"[VF2]", f""))
-        pushovermsg=pushovermsg+f"None VFQ French tracks removed from {media.title}\n"
+        message=message+f"None VFQ French tracks removed from {media.title}\n"
     elif vfq and not notvfq:
         logging.info(f"All French audio tracks are VFQ in {media.title}")
     elif not vfq and notvfq:
@@ -63,7 +63,7 @@ def removevff(plex, mediaid, pushovermsg):
         logging.info(f"------------------------------------------------------------")
 
 # Function labeling
-def labeling(plex, pushovermsg):
+def labeling(plex, message):
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting Labeling")
     medias = plex.library.section("Movies").search(filters = {"label!":excludedlabels,
@@ -86,7 +86,7 @@ def labeling(plex, pushovermsg):
         if label == True:
             media.addLabel("Enfants",locked=False)
             logging.info(f"Adding Enfants label to : {media.title}")
-            pushovermsg=pushovermsg+f"Label Enfants added to : {media.title}\n"
+            message=message+f"Label Enfants added to : {media.title}\n"
     logging.info(f"Completed labeling")
     logging.info(f"------------------------------------------------------------")
 
