@@ -15,7 +15,6 @@ plexUrl=f"http://{os.environ.get('PLEX_IP')}:{os.environ.get('PLEX_PORT')}"
 plexToken=f"{os.environ.get('PLEX_TOKEN')}"
 pushoverKey=f"{os.environ.get('PUSHOVER_KEY')}"
 pushoverToken=f"{os.environ.get('PUSHOVER_TOKEN')}"
-pushovermsg=f""
 flaskPort=f"{os.environ.get('FLASK_PORT')}"
 contentrating=f"{os.environ.get('CONTENT_RATING')}".split(',')
 commonsenseage=int(f"{os.environ.get('COMMONSENSE_AGE')}")
@@ -27,8 +26,7 @@ excludedlabels=f"{os.environ.get('EXCLUDED_LABLES')}".split(',')
 app = Flask(__name__)
 
 # Function removevff
-def removevff(plex, mediaid):
-    global pushovermsg
+def removevff(plex, mediaid, pushovermsg):
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting RemoveVFF")
     media = plex.fetchItem(f"{mediaid}")
@@ -66,8 +64,7 @@ def removevff(plex, mediaid):
         logging.info(f"------------------------------------------------------------")
 
 # Function labeling
-def labeling(plex):
-    global pushovermsg
+def labeling(plex, pushovermsg):
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting Labeling")
     medias = plex.library.section("Movies").search(filters = {"label!":excludedlabels,
@@ -97,15 +94,17 @@ def labeling(plex):
 # Define Plex Webhook listener
 @app.route("/webhook/plex",methods=["GET","POST"])
 def plex_webhook():
+    pushovermsg=f""
     data = json.loads(request.form['payload'])
     if data["event"] == "library.new":
         from plexapi.server import PlexServer
         myplex = PlexServer(plexUrl,plexToken)
-        removevff(myplex,data["Metadata"]["key"])
-        labeling(myplex)
+        pushovermsg = removevff(myplex, data["Metadata"]["key"], pushovermsg)
+        pushovermsg = labeling(myplex, pushovermsg)
         pushover = PushoverAPI(pushoverToken)
         logging.info(f"Pushover Message to send: {pushovermsg}")
         pushover.send_message(pushoverKey, f"{pushovermsg}", title="MediaImport")
+    del pushovermsg
     return ''
 
 # Main
