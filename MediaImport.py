@@ -61,6 +61,7 @@ def removevff(plex, mediaid, message):
         logging.info(f"No French audio tracks in {media.title}")
         logging.info(f"Completed RemoveVFF")
         logging.info(f"------------------------------------------------------------")
+    return message
 
 # Function labeling
 def labeling(plex, message):
@@ -89,6 +90,7 @@ def labeling(plex, message):
             message=message+f"Label Enfants added to : {media.title}\n"
     logging.info(f"Completed labeling")
     logging.info(f"------------------------------------------------------------")
+    return message
 
 # Define Plex Webhook listener
 @app.route("/webhook/plex",methods=["GET","POST"])
