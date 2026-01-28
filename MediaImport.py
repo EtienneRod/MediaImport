@@ -52,7 +52,7 @@ def removevff(plex, mediaid, message):
                               capture_output=True, text=True, shell=True)
         shutil.move(f"{mediapath}/TMP_{mediafilename}",f"{filename}")
         shutil.move(f"{filename}",filename.replace(f"[VF2]", f""))
-        message=message+f"None VFQ French tracks removed from {media.title}\n"
+        message=message+f"All non VFQ's French tracks removed from {media.title}\n"
     elif vfq and not notvfq:
         logging.info(f"All French audio tracks are VFQ in {media.title}")
     elif not vfq and notvfq:
