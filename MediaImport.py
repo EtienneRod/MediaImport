@@ -86,8 +86,8 @@ def labeling(plex, message):
             label = True
         if label == True:
             media.addLabel("Enfants",locked=False)
-            logging.info(f"Adding Enfants label to : {media.title}")
-            message=message+f"Label Enfants added to : {media.title}\n"
+            logging.info(f"Adding Enfants label to : {media.title} in {media.librarySectionTitle}")
+            message=message+f"Label Enfants added to : {media.title} in {media.librarySectionTitle\n"
     logging.info(f"Completed labeling")
     logging.info(f"------------------------------------------------------------")
     return message
