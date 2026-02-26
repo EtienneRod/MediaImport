@@ -102,9 +102,10 @@ def plex_webhook():
         myplex = PlexServer(plexUrl,plexToken)
         pushovermsg = removevff(myplex, data["Metadata"]["key"], pushovermsg)
         pushovermsg = labeling(myplex, pushovermsg)
-        pushover = PushoverAPI(pushoverToken)
-        logging.info(f"Pushover Message to send: {pushovermsg}")
-        pushover.send_message(pushoverKey, f"{pushovermsg}", title="MediaImport")
+        if pushovermsg:
+          pushover = PushoverAPI(pushoverToken)
+          logging.info(f"Pushover Message to send: {pushovermsg}")
+          pushover.send_message(pushoverKey, f"{pushovermsg}", title="MediaImport")
     del pushovermsg
     return ''
 
