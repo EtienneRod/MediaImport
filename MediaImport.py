@@ -98,15 +98,16 @@ def plex_webhook():
     pushovermsg=f""
     data = json.loads(request.form['payload'])
     logging.info(data["event"])
-    from plexapi.server import PlexServer
-    myplex = PlexServer(plexUrl,plexToken)
-    pushovermsg = removevff(myplex, data["Metadata"]["key"], pushovermsg)
-    pushovermsg = labeling(myplex, pushovermsg)
-    if pushovermsg:
-      pushover = PushoverAPI(pushoverToken)
-      logging.info(f"Pushover Message to send: {pushovermsg}")
-      pushover.send_message(pushoverKey, f"{pushovermsg}", title="MediaImport")
-    del pushovermsg
+    if data["event"] == f"library.new":
+      from plexapi.server import PlexServer
+      myplex = PlexServer(plexUrl,plexToken)
+      pushovermsg = removevff(myplex, data["Metadata"]["key"], pushovermsg)
+      pushovermsg = labeling(myplex, pushovermsg)
+      if pushovermsg:
+        pushover = PushoverAPI(pushoverToken)
+        logging.info(f"Pushover Message to send: {pushovermsg}")
+        pushover.send_message(pushoverKey, f"{pushovermsg}", title="MediaImport")
+      del pushovermsg
     return ''
 
 # Main
