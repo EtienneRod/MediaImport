@@ -41,6 +41,8 @@ def removevff(plex, mediaid, message):
                 vfq.append(f"{stream.index}")
             else:
                 notvfq.append(f"{stream.index}")
+    logging.info(f"{vfq}")
+    logging.info(f"{notvfq}")
     if vfq and notvfq:
         mapstring=""
         for stream in notvfq:
