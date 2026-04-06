@@ -21,7 +21,7 @@ contentrating=f"{os.environ.get('CONTENT_RATING')}".split(',')
 commonsenseage=int(f"{os.environ.get('COMMONSENSE_AGE')}")
 audiolanguage=f"{os.environ.get('AUDIO_LANGUAGE')}".split(',')
 excludedlabels=f"{os.environ.get('EXCLUDED_LABLES')}".split(',')
-vfqstrings=f"{os.environ.get('VFQ_STRING').lower()}".split(',')
+vfqstrings=f"{os.environ.get('VFQ_STRING')}".lower().split(',')
 logging.info(f"{vfqstrings}")
 
 # Define Flask
@@ -40,7 +40,7 @@ def removevff(plex, mediaid, message):
     for stream in audio_streams:
         logging.info(f"Audio Title: {stream.title} - Language: {stream.languageCode}")
         if stream.languageCode == f"fra" and stream.title:
-            if (any(sub in f"{stream.title.lower()}" for sub in vfqstrings.lower())) and stream.streamType() == 2:
+            if (any(sub in f"{stream.title.lower()}" for sub in vfqstrings.lower())):
                 vfq.append(f"{stream.index}")
             else:
                 notvfq.append(f"{stream.index}")
@@ -73,15 +73,17 @@ def labeling(plex, message):
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting Labeling")
     medias = plex.library.section("Movies").search(filters = {"label!":excludedlabels,
-                                                               "contentRating|":contentrating})
+                                                              "contentRating|":contentrating,
+                                                              "audioLanguage|":audiolanguage})
     medias = medias + plex.library.section("Films").search(filters = {"label!":excludedlabels,
-                                                               "contentRating|":contentrating})
+                                                                      "contentRating|":contentrating,
+                                                                      "audioLanguage|":audiolanguage})
     medias = medias + plex.library.section("TV Shows").search(filters = {"label!":excludedlabels,
-                                                                             "contentRating|":contentrating,
-                                                                             "audioLanguage|":audiolanguage})
+                                                                         "contentRating|":contentrating,
+                                                                         "audioLanguage|":audiolanguage})
     medias = medias + plex.library.section("Séries TV").search(filters = {"label!":excludedlabels,
-                                                                             "contentRating|":contentrating,
-                                                                             "audioLanguage|":audiolanguage})
+                                                                          "contentRating|":contentrating,
+                                                                          "audioLanguage|":audiolanguage})
     for media in medias:
         label = False
         if media.commonSenseMedia != None:
