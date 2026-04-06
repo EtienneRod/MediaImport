@@ -10,7 +10,7 @@ RUN groupadd -g 1000 MediaImport && useradd -u 1000 -g MediaImport -ms /bin/bash
 
 USER MediaImport
 
-RUN pip install plexapi Flask pushover-complete
+RUN pip install plexapi Flask pushover-complete unidecode
 
 HEALTHCHECK CMD nc -z localhost ${FLASK_PORT}  || exit 1
 
