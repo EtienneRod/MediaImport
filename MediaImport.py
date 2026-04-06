@@ -41,7 +41,7 @@ def removevff(plex, mediaid, message):
     for stream in audio_streams:
         logging.info(f"Audio Title: {stream.title} - Language: {stream.languageCode}")
         if stream.languageCode == f"fra" and stream.title:
-            if any(sub in f"{stream.title.lower()}" for sub in vfqstrings):
+            if any(sub in f"{stream.title.lower()}" for sub in vfqstrings.lower()):
                 vfq.append(f"{stream.index}")
             else:
                 notvfq.append(f"{stream.index}")
