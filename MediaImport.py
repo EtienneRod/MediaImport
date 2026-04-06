@@ -23,7 +23,7 @@ commonsenseage=int(f"{os.environ.get('COMMONSENSE_AGE')}")
 audiolanguage=f"{os.environ.get('AUDIO_LANGUAGE')}".split(',')
 excludedlabels=f"{os.environ.get('EXCLUDED_LABLES')}".split(',')
 vfqstrings=f"{os.environ.get('VFQ_STRING')}".split(',')
-logging.info(f"{vfqstrings}")
+logging.info(f"{vfqstrings.lower()}")
 
 # Define Flask
 app = Flask(__name__)
