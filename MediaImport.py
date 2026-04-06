@@ -22,7 +22,6 @@ commonsenseage=int(f"{os.environ.get('COMMONSENSE_AGE')}")
 audiolanguage=f"{os.environ.get('AUDIO_LANGUAGE')}".split(',')
 excludedlabels=f"{os.environ.get('EXCLUDED_LABLES')}".split(',')
 vfqstrings=f"{os.environ.get('VFQ_STRINGS')}".lower().split(',')
-logging.info(f"{vfqstrings}")
 
 # Define Flask
 app = Flask(__name__)
@@ -44,8 +43,6 @@ def removevff(plex, mediaid, message):
                 vfq.append(f"{stream.index}")
             else:
                 notvfq.append(f"{stream.index}")
-    logging.info(f"{vfq}")
-    logging.info(f"{notvfq}")
     if vfq and notvfq:
         mapstring=""
         for stream in notvfq:
