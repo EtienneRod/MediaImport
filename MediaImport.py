@@ -22,6 +22,8 @@ contentrating=f"{os.environ.get('CONTENT_RATING')}".split(',')
 commonsenseage=int(f"{os.environ.get('COMMONSENSE_AGE')}")
 audiolanguage=f"{os.environ.get('AUDIO_LANGUAGE')}".split(',')
 excludedlabels=f"{os.environ.get('EXCLUDED_LABLES')}".split(',')
+vfqstrings=f"{os.environ.get('VFQ_STRING')}".split(',')
+logging.info(f"{vfqstrings}")
 
 # Define Flask
 app = Flask(__name__)
@@ -39,7 +41,7 @@ def removevff(plex, mediaid, message):
     for stream in audio_streams:
         logging.info(f"Audio Title: {stream.title} - Language: {stream.languageCode}")
         if stream.languageCode == f"fra" and stream.title:
-            if f"vfq" or f"quebecois" in unidecode(stream.title.lower()):
+            if any(sub in f"{stream.title.lower()}" for sub in vfqstrings):
                 vfq.append(f"{stream.index}")
             else:
                 notvfq.append(f"{stream.index}")
