@@ -72,7 +72,7 @@ def removevff(plex, mediaid, message):
 def labeling(plex, message):
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting Labeling")
-    medias = medias + plex.library.section("Films").search(filters = {"label!":excludedlabels,
+    medias = plex.library.section("Films").search(filters = {"label!":excludedlabels,
                                                                       "contentRating|":contentrating,
                                                                       "audioLanguage|":audiolanguage})
     medias = medias + plex.library.section("Séries TV").search(filters = {"label!":excludedlabels,
