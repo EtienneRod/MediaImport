@@ -2,7 +2,6 @@
 
 from flask import Flask, json, request
 from pushover_complete import PushoverAPI
-from unidecode import unidecode
 import logging, lzma, tarfile, os, shutil, subprocess, sys
 
 
@@ -41,7 +40,7 @@ def removevff(plex, mediaid, message):
     for stream in audio_streams:
         logging.info(f"Audio Title: {stream.title} - Language: {stream.languageCode}")
         if stream.languageCode == f"fra" and stream.title:
-            if any(sub in f"{stream.title.lower()}" for sub in vfqstrings.lower()):
+            if (any(sub in f"{stream.title.lower()}" for sub in vfqstrings.lower())) and stream.streamType() = 2:
                 vfq.append(f"{stream.index}")
             else:
                 notvfq.append(f"{stream.index}")
