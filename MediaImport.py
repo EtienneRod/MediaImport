@@ -2,7 +2,9 @@
 
 from flask import Flask, json, request
 from pushover_complete import PushoverAPI
+from unidecode import unidecode
 import logging, lzma, tarfile, os, shutil, subprocess, sys
+
 
 # Set logging settings
 logging.basicConfig(
@@ -37,7 +39,7 @@ def removevff(plex, mediaid, message):
     for stream in audio_streams:
         logging.info(f"Audio Title: {stream.title} - Language: {stream.languageCode}")
         if stream.languageCode == f"fra" and stream.title:
-            if f"vfq" or f"québécois" in f"{stream.title.lower()}":
+            if f"vfq" or f"quebecois" in unidecode(stream.title.lower()):
                 vfq.append(f"{stream.index}")
             else:
                 notvfq.append(f"{stream.index}")
