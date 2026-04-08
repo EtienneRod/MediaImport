@@ -95,8 +95,8 @@ def labeling(plex, message):
 def plex_webhook():
     pushovermsg=f""
     data = json.loads(request.form['payload'])
+    logging.info(data)
     if data["event"] == f"library.new" and (data["Metadata"]["librarySectionTitle"] == f"Films" or data["Metadata"]["librarySectionType"] == f"Série TV" ):
-        logging.info(data)
         from plexapi.server import PlexServer
         myplex = PlexServer(plexUrl,plexToken)
         try:
