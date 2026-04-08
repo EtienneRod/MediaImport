@@ -50,7 +50,6 @@ def removevff(media, message):
         result=subprocess.run([f"ffmpeg -hide_banner -i '{media.media[0].parts[0].file}' -map 0 {mapstring} -y -c copy '{mediapath}/TMP_{mediafilename}'"],
                               capture_output=True, text=True, shell=True)
         shutil.move(f"{mediapath}/TMP_{mediafilename}",f"{media.media[0].parts[0].file}")
-        shutil.move(f"{media.media[0].parts[0].file}",f"{media.media[0].parts[0].file}".replace(f"[VF2]", f""))
         message=message+f"All non VFQ's French tracks removed from {media.title}\n"
     elif vfq and not notvfq:
         logging.info(f"All French audio tracks are VFQ in {media.title}, Nothing to do")
