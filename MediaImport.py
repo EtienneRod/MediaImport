@@ -115,6 +115,7 @@ def plex_webhook():
         if pushovermsg:
             pushover = PushoverAPI(pushoverToken)
             logging.info(f"Pushover Message to send: {pushovermsg}")
+            logging.info(f"------------------------------------------------------------")
             pushover.send_message(pushoverKey, f"{pushovermsg}", title="MediaImport")
         del pushovermsg
     return ''
