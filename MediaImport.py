@@ -106,10 +106,7 @@ def plex_webhook():
             logging.info(f"------------------------------------------------------------")
             logging.info(f"Movie: {plexmedia.title} - Type: {plexmedia.type}")
         if f"{plexmedia.type}" == "episode" or f"{plexmedia.type}" == "movie":
-            try:
-                pushovermsg = removevff(plexmedia, pushovermsg)
-            except:
-                logging.info(f"{plexmedia.grandparentTitle} - {plexmedia.title} - RemoveVFF error")
+            pushovermsg = removevff(plexmedia, pushovermsg)
         pushovermsg = labeling(myplex, pushovermsg)
         if pushovermsg:
             pushover = PushoverAPI(pushoverToken)
