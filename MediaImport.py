@@ -99,7 +99,10 @@ def plex_webhook():
     if data["event"] == f"library.new":
         from plexapi.server import PlexServer
         myplex = PlexServer(plexUrl,plexToken)
-        pushovermsg = removevff(myplex, data["Metadata"]["key"], pushovermsg)
+        try:
+          pushovermsg = removevff(myplex, data["Metadata"]["key"], pushovermsg)
+        except:
+          logging.info(f"RemoveVFF error")
         pushovermsg = labeling(myplex, pushovermsg)
         if pushovermsg:
           pushover = PushoverAPI(pushoverToken)
