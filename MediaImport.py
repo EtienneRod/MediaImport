@@ -31,8 +31,8 @@ def removevff(plex, mediaid, message):
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting RemoveVFF")
     media = plex.fetchItem(f"{mediaid}")
+    logging.info(f"Title: {media.title} - Filename: {filename} - Type: {media.type}")
     filename=f"{media.media[0].parts[0].file}"
-    logging.info(f"Title: {media.title} - Filename: {filename}")
     audio_streams = media.media[0].parts[0].audioStreams()
     vfq=[]
     notvfq=[]
@@ -100,7 +100,7 @@ def plex_webhook():
         from plexapi.server import PlexServer
         myplex = PlexServer(plexUrl,plexToken)
         logging.info(data["Metadata"]["key"])
-        if data["Metadata"]["librarySectionTitle"] == f"Films" or (data["Metadata"]["librarySectionTitle"] == f"Séries TV" and not data["Metadata"]["key"].endswith("/children")):
+        if data["Metadata"]["librarySectionTitle"] == f"Films" or data["Metadata"]["librarySectionTitle"] == f"Séries TV":
             try:
                 pushovermsg = removevff(myplex, data["Metadata"]["key"], pushovermsg)
             except:
