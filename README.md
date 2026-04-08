@@ -26,6 +26,6 @@ services:
       - COMMONSENSE_AGE=12 # Optional, Default to 12. Maximum Common Sense Age Rating in order to add label Enfants
       - AUDIO_LANGUAGE="French,french-canadian" #Optionnal, Default to "French,french-canadian". Language needed to add label Enfants
       - VFQ_STRINGS = "VFQ,Québécois" #Optionnal, default to "VFQ,Québécois"
-      - EXCLUDED_LABLES="Enfants,ExcludeEnfants" #Optionnal, Default to "Enfants,ExcludedEnfants". Labels to exclude when searching for new content to label
+      - EXCLUDED_LABELS="Enfants,ExcludeEnfants" #Optionnal, Default to "Enfants,ExcludedEnfants". Labels to exclude when searching for new content to label
     volumes:
       - /mnt/Share/Medias:/mnt/Share/Medias  # Required. Change to your Media root folder
