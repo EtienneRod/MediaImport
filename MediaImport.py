@@ -92,7 +92,7 @@ def labeling(plex, message):
 def plex_webhook():
     pushovermsg=f""
     data = json.loads(request.form['payload'])
-    if data["event"] == f"library.new" and data["Metadata"]["librarySectionTitle"] == f"Films" or (data["Metadata"]["librarySectionTitle"] == f"Séries TV":
+    if data["event"] == f"library.new" and (data["Metadata"]["librarySectionTitle"] == f"Films" or (data["Metadata"]["librarySectionTitle"] == f"Séries TV"):
         from plexapi.server import PlexServer
         myplex = PlexServer(plexUrl,plexToken)
         plexmedia = myplex.fetchItem(data["Metadata"]["key"])
