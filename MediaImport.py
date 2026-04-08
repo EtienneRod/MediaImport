@@ -32,8 +32,6 @@ def removevff(plex, mediaid, message):
     logging.info(f"Starting RemoveVFF")
     media = plex.fetchItem(f"{mediaid}")
     logging.info(f"{media}")
-    if media.startwith(f"<Episode:")
-        logging.info(f"Start with <Episode:")
     filename=f"{media.media[0].parts[0].file}"
     logging.info(f"Title: {media.title} - Filename: {filename}")
     audio_streams = media.media[0].parts[0].audioStreams()
@@ -98,22 +96,23 @@ def labeling(plex, message):
 def plex_webhook():
     pushovermsg=f""
     data = json.loads(request.form['payload'])
-    if data["event"] == f"library.new" and (data["Metadata"]["librarySectionTitle"] == f"Films" or data["Metadata"]["librarySectionTitle"] == f"Séries TV"):
+    if data["event"] == f"library.new":
         logging.info(f"{data}")
         from plexapi.server import PlexServer
         myplex = PlexServer(plexUrl,plexToken)
+        if data["Metadata"]["librarySectionTitle"] == f"Films" or (data["Metadata"]["librarySectionTitle"] == f"Séries TV") and data["Metadata"]["key"].endswith(f"/children"):
+            try:
+                pushovermsg = removevff(myplex, data["Metadata"]["key"], pushovermsg)
+            except:
+                logging.info(f"RemoveVFF error")
         try:
-          pushovermsg = removevff(myplex, data["Metadata"]["key"], pushovermsg)
+            pushovermsg = labeling(myplex, pushovermsg)
         except:
-          logging.info(f"RemoveVFF error")
-        try:
-          pushovermsg = labeling(myplex, pushovermsg)
-        except:
-          logging.info(f"Labeling error")
+            logging.info(f"Labeling error")
         if pushovermsg:
-          pushover = PushoverAPI(pushoverToken)
-          logging.info(f"Pushover Message to send: {pushovermsg}")
-          pushover.send_message(pushoverKey, f"{pushovermsg}", title="MediaImport")
+            pushover = PushoverAPI(pushoverToken)
+            logging.info(f"Pushover Message to send: {pushovermsg}")
+            pushover.send_message(pushoverKey, f"{pushovermsg}", title="MediaImport")
         del pushovermsg
     return ''
 
