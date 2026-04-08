@@ -30,7 +30,6 @@ app = Flask(__name__)
 def removevff(media, message):
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting RemoveVFF")
-    filename=f"{media.media[0].parts[0].file}"
     audio_streams = media.media[0].parts[0].audioStreams()
     vfq=[]
     notvfq=[]
@@ -45,20 +44,20 @@ def removevff(media, message):
         mapstring=""
         for stream in notvfq:
             mapstring=f"-map -0:{stream}"
-        mediapath = os.path.dirname(f"{filename}")
-        mediafilename = os.path.basename(f"{filename}")
+        mediapath = os.path.dirname(f"{media.media[0].parts[0].file}")
+        mediafilename = os.path.basename(f"{media.media[0].parts[0].file}")
         logging.info(f"Path: {mediapath} - Filename: {mediafilename} - MapString: {mapstring}")
-        result=subprocess.run([f"ffmpeg -hide_banner -i '{filename}' -map 0 {mapstring} -y -c copy '{mediapath}/TMP_{mediafilename}'"],
+        result=subprocess.run([f"ffmpeg -hide_banner -i '{media.media[0].parts[0].file}' -map 0 {mapstring} -y -c copy '{mediapath}/TMP_{mediafilename}'"],
                               capture_output=True, text=True, shell=True)
-        shutil.move(f"{mediapath}/TMP_{mediafilename}",f"{filename}")
-        shutil.move(f"{filename}",filename.replace(f"[VF2]", f""))
+        shutil.move(f"{mediapath}/TMP_{mediafilename}",f"{media.media[0].parts[0].file}")
+        shutil.move(f"{media.media[0].parts[0].file}",media.media[0].parts[0].file.replace(f"[VF2]", f""))
         message=message+f"All non VFQ's French tracks removed from {media.title}\n"
     elif vfq and not notvfq:
-        logging.info(f"All French audio tracks are VFQ in {media.title}, nothing to do")
+        logging.info(f"All French audio tracks are VFQ in {media.title}, Nothing to do")
     elif not vfq and notvfq:
-        logging.info(f"No French audio tracks are VFQ in {media.title}, nothing to do")
+        logging.info(f"No French audio tracks are VFQ in {media.title}, Nothing to do")
     else:
-        logging.info(f"No French audio tracks in {media.title}, nothing to do")
+        logging.info(f"No French audio tracks in {media.title}, Nothing to do")
         logging.info(f"Completed RemoveVFF")
         logging.info(f"------------------------------------------------------------")
     return message
@@ -98,7 +97,10 @@ def plex_webhook():
         from plexapi.server import PlexServer
         myplex = PlexServer(plexUrl,plexToken)
         plexmedia = myplex.fetchItem(data["Metadata"]["key"])
-        logging.info(f"Title: {plexmedia.title} - Type: {plexmedia.type}")
+        if f"{plexmedia.type}" == "episode":
+            logging.info(f"Show: {plexmedia.grandparentTitle} - Episode: {plexmedia.title}")
+        else:
+            logging.info(f"Movie: {plexmedia.title}")
         if f"{plexmedia.type}" == "episode" or f"{plexmedia.type}" == "movie":
             try:
                 pushovermsg = removevff(plexmedia, pushovermsg)
