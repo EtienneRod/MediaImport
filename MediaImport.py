@@ -21,7 +21,7 @@ contentrating=f"{os.environ.get('CONTENT_RATING')}".split(',')
 commonsenseage=int(f"{os.environ.get('COMMONSENSE_AGE')}")
 audiolanguage=f"{os.environ.get('AUDIO_LANGUAGE')}".split(',')
 excludedlabels=f"{os.environ.get('EXCLUDED_LABELS')}".split(',')
-vfqstrings=f"{os.environ.get('VFQ_STRINGS')}".lower().split(',')
+vfqstrings=f"{os.environ.get('VFQ_STRINGS')}".split(',')
 
 # Define Flask
 app = Flask(__name__)
@@ -36,7 +36,7 @@ def removevff(media, message):
     for stream in audio_streams:
         logging.info(f"Audio Title: {stream.title} - Language: {stream.languageCode}")
         if stream.languageCode == f"fra" and stream.title:
-            if stream.title.lower() in vfqstrings:
+            if stream.title.casefold() in vfqstrings.casefold():
                 vfq.append(f"{stream.index}")
             else:
                 notvfq.append(f"{stream.index}")
