@@ -100,7 +100,7 @@ def plex_webhook():
         from plexapi.server import PlexServer
         myplex = PlexServer(plexUrl,plexToken)
         logging.info(data["Metadata"]["key"])
-        if data["Metadata"]["librarySectionTitle"] == f"Films" or data["Metadata"]["librarySectionTitle"] == f"Séries TV":
+        if data["Metadata"]["librarySectionTitle"] == f"Films" or (data["Metadata"]["librarySectionTitle"] == f"Séries TV" and not data["Metadata"]["key"].endswith("/children"): :
             try:
                 pushovermsg = removevff(myplex, data["Metadata"]["key"], pushovermsg)
             except:
