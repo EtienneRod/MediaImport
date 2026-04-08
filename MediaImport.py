@@ -99,12 +99,12 @@ def plex_webhook():
         logging.info(f"{data}")
         from plexapi.server import PlexServer
         myplex = PlexServer(plexUrl,plexToken)
-        logging.info(data["Metadata"]["key"])
-        if data["Metadata"]["librarySectionTitle"] == f"Films" or data["Metadata"]["librarySectionTitle"] == f"Séries TV":
-            try:
-                pushovermsg = removevff(myplex, data["Metadata"]["key"], pushovermsg)
-            except:
-                logging.info(f"{data['Metadata']['key']} - RemoveVFF error")
+        plexmedia = myplex.fetchItem(data["Metadata"]["key"])
+        logging.info(f"Title: {plexmedia.title} - Type: {plexmedia.type}")
+        #try:
+        #    pushovermsg = removevff(myplex, data["Metadata"]["key"], pushovermsg)
+        #except:
+        #    logging.info(f"{data['Metadata']['key']} - RemoveVFF error")
         try:
             pushovermsg = labeling(myplex, pushovermsg)
         except:
