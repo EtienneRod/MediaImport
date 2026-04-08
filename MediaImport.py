@@ -31,7 +31,9 @@ def removevff(plex, mediaid, message):
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting RemoveVFF")
     media = plex.fetchItem(f"{mediaid}")
-    logging.info(media)
+    logging.info(f"{media}")
+    if media.startwith(f"<Episode:")
+        logging.info(f"Start with <Episode:")
     filename=f"{media.media[0].parts[0].file}"
     logging.info(f"Title: {media.title} - Filename: {filename}")
     audio_streams = media.media[0].parts[0].audioStreams()
@@ -57,11 +59,11 @@ def removevff(plex, mediaid, message):
         shutil.move(f"{filename}",filename.replace(f"[VF2]", f""))
         message=message+f"All non VFQ's French tracks removed from {media.title}\n"
     elif vfq and not notvfq:
-        logging.info(f"All French audio tracks are VFQ in {media.title}")
+        logging.info(f"All French audio tracks are VFQ in {media.title}, nothing to do")
     elif not vfq and notvfq:
-        logging.info(f"No French audio tracks are VFQ in {media.title}")
+        logging.info(f"No French audio tracks are VFQ in {media.title}, nothing to do")
     else:
-        logging.info(f"No French audio tracks in {media.title}")
+        logging.info(f"No French audio tracks in {media.title}, nothing to do")
         logging.info(f"Completed RemoveVFF")
         logging.info(f"------------------------------------------------------------")
     return message
@@ -96,7 +98,7 @@ def labeling(plex, message):
 def plex_webhook():
     pushovermsg=f""
     data = json.loads(request.form['payload'])
-    if data["event"] == f"library.new" and (data["Metadata"]["librarySectionTitle"] == f"Films" or data["Metadata"]["librarySectionTitle"] == f"Séries TV" ):
+    if data["event"] == f"library.new" and (data["Metadata"]["librarySectionTitle"] == f"Films" or data["Metadata"]["librarySectionTitle"] == f"Séries TV"):
         logging.info(f"{data}")
         from plexapi.server import PlexServer
         myplex = PlexServer(plexUrl,plexToken)
