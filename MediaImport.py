@@ -72,9 +72,9 @@ def labeling(plex, message):
     medias = medias + plex.library.section("Séries TV").search(filters = {"label!":excludedlabels,
                                                                           "contentRating|":contentrating,
                                                                           "audioLanguage|":audiolanguage})
+    labeled = False
     for media in medias:
         label = False
-        labeled = False
         if media.commonSenseMedia != None:
             if media.commonSenseMedia.ageRatings[0].age <= commonsenseage:
                 label = True
@@ -111,10 +111,7 @@ def plex_webhook():
                 pushovermsg = removevff(plexmedia, pushovermsg)
             except:
                 logging.info(f"{plexmedia.grandparentTitle} - {plexmedia.title} - RemoveVFF error")
-        try:
-            pushovermsg = labeling(myplex, pushovermsg)
-        except:
-            logging.info(f"Labeling error")
+        pushovermsg = labeling(myplex, pushovermsg)
         if pushovermsg:
             pushover = PushoverAPI(pushoverToken)
             logging.info(f"Pushover Message to send: {pushovermsg}")
