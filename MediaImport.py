@@ -31,7 +31,7 @@ def removevff(plex, mediaid, message):
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting RemoveVFF")
     media = plex.fetchItem(f"{mediaid}")
-    logging.info(f"{media}")
+    logging.info(f"{media.media[0].metadataType()}")
     filename=f"{media.media[0].parts[0].file}"
     logging.info(f"Title: {media.title} - Filename: {filename}")
     audio_streams = media.media[0].parts[0].audioStreams()
