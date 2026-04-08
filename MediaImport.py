@@ -57,8 +57,8 @@ def removevff(media, message):
         logging.info(f"No French audio tracks are VFQ in {media.title}, Nothing to do")
     else:
         logging.info(f"No French audio tracks in {media.title}, Nothing to do")
-        logging.info(f"Completed RemoveVFF")
-        logging.info(f"------------------------------------------------------------")
+    logging.info(f"Completed RemoveVFF")
+    logging.info(f"------------------------------------------------------------")
     return message
 
 # Function labeling
