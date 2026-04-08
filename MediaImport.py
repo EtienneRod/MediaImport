@@ -31,7 +31,6 @@ def removevff(plex, mediaid, message):
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting RemoveVFF")
     media = plex.fetchItem(f"{mediaid}")
-    logging.info(f"{media.media[0].metadataType()}")
     filename=f"{media.media[0].parts[0].file}"
     logging.info(f"Title: {media.title} - Filename: {filename}")
     audio_streams = media.media[0].parts[0].audioStreams()
@@ -105,7 +104,7 @@ def plex_webhook():
             try:
                 pushovermsg = removevff(myplex, data["Metadata"]["key"], pushovermsg)
             except:
-                logging.info(f"RemoveVFF error")
+                logging.info(f"{data['Metadata']['key']} - RemoveVFF error")
         try:
             pushovermsg = labeling(myplex, pushovermsg)
         except:
