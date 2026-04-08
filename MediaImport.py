@@ -27,11 +27,9 @@ vfqstrings=f"{os.environ.get('VFQ_STRINGS')}".lower().split(',')
 app = Flask(__name__)
 
 # Function removevff
-def removevff(plex, mediaid, message):
+def removevff(media, message):
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting RemoveVFF")
-    media = plex.fetchItem(f"{mediaid}")
-    logging.info(f"Title: {media.title} - Filename: {filename} - Type: {media.type}")
     filename=f"{media.media[0].parts[0].file}"
     audio_streams = media.media[0].parts[0].audioStreams()
     vfq=[]
@@ -101,10 +99,11 @@ def plex_webhook():
         myplex = PlexServer(plexUrl,plexToken)
         plexmedia = myplex.fetchItem(data["Metadata"]["key"])
         logging.info(f"Title: {plexmedia.title} - Type: {plexmedia.type}")
-        #try:
-        #    pushovermsg = removevff(myplex, data["Metadata"]["key"], pushovermsg)
-        #except:
-        #    logging.info(f"{data['Metadata']['key']} - RemoveVFF error")
+        if f"{plexmedia.type}" == "episode" or f"{plexmedia.type}" == "movie":
+            try:
+                pushovermsg = removevff(plexmedia, pushovermsg)
+            except:
+                logging.info(f"{plexmedia.grandparentTitle} - {plexmedia.title} - RemoveVFF error")
         try:
             pushovermsg = labeling(myplex, pushovermsg)
         except:
