@@ -103,7 +103,10 @@ def plex_webhook():
           pushovermsg = removevff(myplex, data["Metadata"]["key"], pushovermsg)
         except:
           logging.info(f"RemoveVFF error")
-        pushovermsg = labeling(myplex, pushovermsg)
+        try:
+          pushovermsg = labeling(myplex, pushovermsg)
+        except:
+          logging.info(f"Labeling error")
         if pushovermsg:
           pushover = PushoverAPI(pushoverToken)
           logging.info(f"Pushover Message to send: {pushovermsg}")
