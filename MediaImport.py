@@ -74,15 +74,19 @@ def labeling(plex, message):
                                                                           "audioLanguage|":audiolanguage})
     for media in medias:
         label = False
+        labeled = False
         if media.commonSenseMedia != None:
             if media.commonSenseMedia.ageRatings[0].age <= commonsenseage:
                 label = True
         else:
             label = True
         if label == True:
+            labeled = True
             media.addLabel("Enfants",locked=False)
             logging.info(f"Adding Enfants label to : {media.title} in Library : {media.librarySectionTitle}")
             message=message+f"Label Enfants added to : {media.title} in Library : {media.librarySectionTitle}\n"
+    if labeled == False:
+        logging.info(f"No media needed labeling")
     logging.info(f"Completed labeling")
     logging.info(f"------------------------------------------------------------")
     return message
@@ -97,9 +101,13 @@ def plex_webhook():
         myplex = PlexServer(plexUrl,plexToken)
         plexmedia = myplex.fetchItem(data["Metadata"]["key"])
         if f"{plexmedia.type}" == "episode":
-            logging.info(f"Show: {plexmedia.grandparentTitle} - Episode: {plexmedia.title}")
-        else:
-            logging.info(f"Movie: {plexmedia.title}")
+            logging.info(f"------------------------------------------------------------")
+            logging.info(f"Show: {plexmedia.grandparentTitle} - Episode: {plexmedia.title} - Type: {plexmedia.type}")
+            logging.info(f"------------------------------------------------------------")
+        elif f"{plexmedia.type}" == "movie":
+            logging.info(f"------------------------------------------------------------")
+            logging.info(f"Movie: {plexmedia.title} - Type: {plexmedia.type}")
+            logging.info(f"------------------------------------------------------------")
         if f"{plexmedia.type}" == "episode" or f"{plexmedia.type}" == "movie":
             try:
                 pushovermsg = removevff(plexmedia, pushovermsg)
