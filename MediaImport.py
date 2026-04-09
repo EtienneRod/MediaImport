@@ -91,21 +91,21 @@ def labeling(plex, message):
     return message
 
 # Define Plex Webhook listener
-@app.route("/webhook/plex",methods=["GET","POST"])
+@app.route(f"/webhook/plex",methods=[f"GET",f"POST"])
 def plex_webhook():
     pushovermsg=f""
     data = json.loads(f"{request.form['payload']}")
     if f"{data["event"]}" == f"library.new" and (f"{data["Metadata"]["librarySectionTitle"]}" == f"Films" or f"{data["Metadata"]["librarySectionTitle"]}" == f"Séries TV"):
         from plexapi.server import PlexServer
-        myplex = PlexServer(plexUrl,plexToken)
+        myplex = PlexServer(f"{plexUrl}",f"{plexToken}")
         plexmedia = myplex.fetchItem(f"{data["Metadata"]["key"]}")
-        if f"{plexmedia.type}" == "episode":
+        if f"{plexmedia.type}" == f"episode":
             logging.info(f"------------------------------------------------------------")
             logging.info(f"Show: {plexmedia.grandparentTitle} - Episode: {plexmedia.title} - Type: {plexmedia.type}")
-        elif f"{plexmedia.type}" == "movie":
+        elif f"{plexmedia.type}" == f"movie":
             logging.info(f"------------------------------------------------------------")
             logging.info(f"Movie: {plexmedia.title} - Type: {plexmedia.type}")
-        if f"{plexmedia.type}" == "episode" or f"{plexmedia.type}" == "movie":
+        if f"{plexmedia.type}" == f"episode" or f"{plexmedia.type}" == f"movie":
             pushovermsg = removevff(plexmedia, f"{pushovermsg}")
         pushovermsg = labeling(myplex, f"{pushovermsg}")
         if pushovermsg:
