@@ -35,8 +35,8 @@ def removevff(media, message):
     notvfq=[]
     for stream in audio_streams:
         logging.info(f"Audio Title: {stream.title} - Language: {stream.languageCode}")
-        if stream.languageCode == f"fra" and stream.title:
-            if stream.title.casefold() in vfqstrings.casefold():
+        if stream.languageCode == f"fra" and f"{stream.title}":
+            if f"{stream.title}".casefold() in f"{vfqstrings}".casefold():
                 vfq.append(f"{stream.index}")
             else:
                 notvfq.append(f"{stream.index}")
@@ -65,12 +65,12 @@ def removevff(media, message):
 def labeling(plex, message):
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting Labeling")
-    medias = plex.library.section("Films").search(filters = {"label!":excludedlabels,
-                                                                      "contentRating|":contentrating,
-                                                                      "audioLanguage|":audiolanguage})
-    medias = medias + plex.library.section("Séries TV").search(filters = {"label!":excludedlabels,
-                                                                          "contentRating|":contentrating,
-                                                                          "audioLanguage|":audiolanguage})
+    medias = plex.library.section(f"Films").search(filters = {f"label!":f"{excludedlabels}",
+                                                                      f"contentRating|":f"{contentrating}",
+                                                                      f"audioLanguage|":f"{audiolanguage}"})
+    medias = medias + plex.library.section(f"Séries TV").search(filters = {f"label!":f"{excludedlabels}",
+                                                                          f"contentRating|":f"{contentrating}",
+                                                                          f"audioLanguage|":f"{audiolanguage}"})
     labeled = False
     for media in medias:
         label = False
@@ -83,7 +83,7 @@ def labeling(plex, message):
             labeled = True
             media.addLabel("Enfants",locked=False)
             logging.info(f"Adding Enfants label to : {media.title} in Library : {media.librarySectionTitle}")
-            message=message+f"Label Enfants added to : {media.title} in Library : {media.librarySectionTitle}\n"
+            message=f"{message}"+f"Label Enfants added to : {media.title} in Library : {media.librarySectionTitle}\n"
     if labeled == False:
         logging.info(f"No media needed labeling")
     logging.info(f"Completed labeling")
@@ -94,11 +94,11 @@ def labeling(plex, message):
 @app.route("/webhook/plex",methods=["GET","POST"])
 def plex_webhook():
     pushovermsg=f""
-    data = json.loads(request.form['payload'])
-    if data["event"] == f"library.new" and (data["Metadata"]["librarySectionTitle"] == f"Films" or data["Metadata"]["librarySectionTitle"] == f"Séries TV"):
+    data = json.loads(f"{request.form['payload']}")
+    if f"{data["event"]}" == f"library.new" and (f"{data["Metadata"]["librarySectionTitle"]}" == f"Films" or f"{data["Metadata"]["librarySectionTitle"]}" == f"Séries TV"):
         from plexapi.server import PlexServer
         myplex = PlexServer(plexUrl,plexToken)
-        plexmedia = myplex.fetchItem(data["Metadata"]["key"])
+        plexmedia = myplex.fetchItem(f"{data["Metadata"]["key"]}")
         if f"{plexmedia.type}" == "episode":
             logging.info(f"------------------------------------------------------------")
             logging.info(f"Show: {plexmedia.grandparentTitle} - Episode: {plexmedia.title} - Type: {plexmedia.type}")
@@ -106,13 +106,13 @@ def plex_webhook():
             logging.info(f"------------------------------------------------------------")
             logging.info(f"Movie: {plexmedia.title} - Type: {plexmedia.type}")
         if f"{plexmedia.type}" == "episode" or f"{plexmedia.type}" == "movie":
-            pushovermsg = removevff(plexmedia, pushovermsg)
-        pushovermsg = labeling(myplex, pushovermsg)
+            pushovermsg = removevff(plexmedia, f"{pushovermsg}")
+        pushovermsg = labeling(myplex, f"{pushovermsg}")
         if pushovermsg:
-            pushover = PushoverAPI(pushoverToken)
+            pushover = PushoverAPI(f"{pushoverToken}")
             logging.info(f"Pushover Message to send: {pushovermsg}")
             logging.info(f"------------------------------------------------------------")
-            pushover.send_message(pushoverKey, f"{pushovermsg}", title="MediaImport")
+            pushover.send_message(f"{pushoverKey}", f"{pushovermsg}", title=f"MediaImport")
         del pushovermsg
     return ''
 
