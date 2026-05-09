@@ -23,6 +23,13 @@ audiolanguage=f"{os.environ.get('AUDIO_LANGUAGE')}".split(',')
 excludedlabels=f"{os.environ.get('EXCLUDED_LABELS')}".split(',')
 vfqstrings=f"{os.environ.get('VFQ_STRINGS')}".split(',')
 
+# Log filtering Value
+logging.info(f"Content Ratings : {contentrating}")
+logging.info(f"Common Sense Age : {commonsenseage}")
+logging.info(f"Audio Language : {audiolanguage}")
+logging.info(f"Excluded Labels : {excludedlabels}")
+logging.info(f"VFQ Strings : {vfqstrings}")
+
 # Define Flask
 app = Flask(__name__)
 
