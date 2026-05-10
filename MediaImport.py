@@ -77,24 +77,20 @@ def labeling(plex, message):
     logging.info(f"Starting Labeling")
   
     medias = plex.library.section(f"Movies").search(filters = {f"label!":f"{excludedlabels}",
-                                                               f"contentRating|":f"{contentrating}",
                                                                f"audioLanguage|":f"{audiolanguage}"})
     medias = medias + plex.library.section(f"Films").search(filters = {f"label!":f"{excludedlabels}",
-                                                                       f"contentRating|":f"{contentrating}",
                                                                        f"audioLanguage|":f"{audiolanguage}"})
     medias = medias + plex.library.section(f"TV Shows").search(filters = {f"label!":f"{excludedlabels}",
-                                                                          f"contentRating|":f"{contentrating}",
                                                                           f"audioLanguage|":f"{audiolanguage}"})
     medias = medias + plex.library.section(f"Séries TV").search(filters = {f"label!":f"{excludedlabels}",
-                                                                           f"contentRating|":f"{contentrating}",
                                                                            f"audioLanguage|":f"{audiolanguage}"})
     labeled = False
     for media in medias:
         label = False
         if media.commonSenseMedia != None:
-            if media.commonSenseMedia.ageRatings[0].age <= commonsenseage:
+            if media.commonSenseMedia.ageRatings[0].age <= commonsenseage or media.contentRating in contentrating:
                 label = True
-        else:
+        elif media.contentRating in contentrating:
             label = True
         if label == True:
             labeled = True
