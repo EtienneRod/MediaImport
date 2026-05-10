@@ -29,6 +29,7 @@ vfqstrings=f"{os.environ.get('VFQ_STRINGS')}".split(',')
 logging.info(f"Content Ratings : {contentrating}")
 logging.info(f"Common Sense Age : {commonsenseage}")
 logging.info(f"Audio Language : {audiolanguage}")
+logging.info(f"Kid Label : {kidlabel}")
 logging.info(f"Excluded Labels : {excludedlabels}")
 logging.info(f"VFQ Strings : {vfqstrings}")
 
