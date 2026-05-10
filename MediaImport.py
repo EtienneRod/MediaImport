@@ -114,7 +114,7 @@ def plex_webhook():
     data = json.loads(f"{request.form['payload']}")
     if f"{data["event"]}" == f"library.new" and (f"{data["Metadata"]["librarySectionTitle"]}" == f"Films" or f"{data["Metadata"]["librarySectionTitle"]}" == f"Séries TV"):
         from plexapi.server import PlexServer
-        myplex = PlexServer(f"{plexUrl}",f"{plexToken}")
+        myplex = PlexServer(f"{plexUrl}",f"{plexToken}",timeout=120)
         plexmedia = myplex.fetchItem(f"{data["Metadata"]["key"]}")
         if f"{plexmedia.type}" == f"episode":
             logging.info(f"------------------------------------------------------------")
