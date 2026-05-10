@@ -93,7 +93,7 @@ def labeling(plex, message):
         if media.commonSenseMedia != None:
             if media.commonSenseMedia.ageRatings[0].age <= commonsenseage:
                 label = True
-        else
+        else:
             label = True
         if label == True:
             labeled = True
