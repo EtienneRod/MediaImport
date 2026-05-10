@@ -22,6 +22,7 @@ commonsenseage=int(f"{os.environ.get('COMMONSENSE_AGE')}")
 audiolanguage=f"{os.environ.get('AUDIO_LANGUAGE')}".split(',')
 excludedlabels=f"{os.environ.get('EXCLUDED_LABELS')}".split(',')
 vfqstrings=f"{os.environ.get('VFQ_STRINGS')}".split(',')
+kidlabel=f"{os.environ.get('KID_LABEL')}".split(',')
 
 # Log filtering Value
 logging.info(f"Content Ratings : {contentrating}")
