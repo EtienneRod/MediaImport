@@ -1,6 +1,6 @@
 FROM python:3-slim
 
-ENV TZ=America/Toronto FLASK_PORT=5000 PLEX_PORT=32400 CONTENT_RATING="G,PG,TV-G,TV-PG,TV-Y,ca/G,ca/PG,ca/TV-PG,ca/TV-Y7,ca/C8" COMMONSENSE_AGE=12 AUDIO_LANGUAGE="French,french-canadian,Québécois" EXCLUDED_LABELS="Enfants,ExcludeEnfants" VFQ_STRINGS="VFQ,QUÉBÉCOIS" KID_LABEL="Enfants"
+ENV TZ=America/Toronto FLASK_PORT=5000 PLEX_PORT=32400 CONTENT_RATING="G,PG,TV-G,TV-PG,TV-Y,ca/G,ca/PG,ca/TV-PG,ca/TV-Y7,ca/C8" COMMONSENSE_AGE=12 AUDIO_LANGUAGE="French,french-canadian,Québécois" KID_LABEL="Enfants" EXCLUDED_LABELS="ExcludeEnfants" VFQ_STRINGS="VFQ,QUÉBÉCOIS"
 
 RUN ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
 
