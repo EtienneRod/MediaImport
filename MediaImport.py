@@ -87,7 +87,7 @@ def labeling(plex, message):
                                                                           f"audioLanguage|":f"{audiolanguage}"})
     medias = medias + plex.library.section(f"Séries TV").search(filters = {f"label!":f"{excludedlabels}",
                                                                            f"contentRating|":f"{contentrating}",
-                                                                          f"audioLanguage|":f"{audiolanguage}"})
+                                                                           f"audioLanguage|":f"{audiolanguage}"})
     labeled = False
     for media in medias:
         label = False
