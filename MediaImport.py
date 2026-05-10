@@ -72,6 +72,7 @@ def removevff(media, message):
 def labeling(plex, message):
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting Labeling")
+  
     medias = plex.library.section(f"Movies").search(filters = {f"label!":f"{excludedlabels}",
                                                                f"contentRating|":f"{contentrating}",
                                                                f"audioLanguage|":f"{audiolanguage}"})
@@ -82,7 +83,7 @@ def labeling(plex, message):
                                                                           f"contentRating|":f"{contentrating}",
                                                                           f"audioLanguage|":f"{audiolanguage}"})
     medias = medias + plex.library.section(f"Séries TV").search(filters = {f"label!":f"{excludedlabels}",
-                                                                          f"contentRating|":f"{contentrating}",
+                                                                           f"contentRating|":f"{contentrating}",
                                                                           f"audioLanguage|":f"{audiolanguage}"})
     labeled = False
     for media in medias:
@@ -90,7 +91,7 @@ def labeling(plex, message):
         if media.commonSenseMedia != None:
             if media.commonSenseMedia.ageRatings[0].age <= commonsenseage:
                 label = True
-        else:
+        else
             label = True
         if label == True:
             labeled = True
