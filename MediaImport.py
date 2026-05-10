@@ -20,9 +20,10 @@ flaskPort=f"{os.environ.get('FLASK_PORT')}"
 contentrating=f"{os.environ.get('CONTENT_RATING')}".split(',')
 commonsenseage=int(f"{os.environ.get('COMMONSENSE_AGE')}")
 audiolanguage=f"{os.environ.get('AUDIO_LANGUAGE')}".split(',')
-excludedlabels=f"{os.environ.get('EXCLUDED_LABELS')}".split(',')
-vfqstrings=f"{os.environ.get('VFQ_STRINGS')}".split(',')
 kidlabel=f"{os.environ.get('KID_LABEL')}".split(',')
+excludedlabels=f"{os.environ.get('EXCLUDED_LABELS')}".split(',')
+excludedlabels.append(f"{kidlabel}")
+vfqstrings=f"{os.environ.get('VFQ_STRINGS')}".split(',')
 
 # Log filtering Value
 logging.info(f"Content Ratings : {contentrating}")
