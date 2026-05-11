@@ -67,28 +67,32 @@ def labeling(plex, message):
     for kid in LabelConfig["Kid"]:
         kidname=kid["Name"]
         contentrating=kid["ContentRating"].split(',')
+        commonsenseage = (date.today().year - kid["BDay"].year - ((date.today().month,date.today().day) < (kid["BDay"].month,kid["BDay"].day))) + kid["CommonSenseAgeOffset"]
         audiolanguage=kid["AudioLanguage"].split(',')
         excludedlabels=kid["Excluded_Labels"].split(',')
         excludedlabels.append(kidname)
         medias = []
         medias = medias + plex.library.section(f"Movies").search(filters = {f"label!":excludedlabels,
-                                                                            f"contentRating":contentrating,
                                                                             f"audioLanguage|":audiolanguage})
         medias = medias + plex.library.section(f"Films").search(filters = {f"label!":excludedlabels,
-                                                                           f"contentRating":contentrating,
                                                                            f"audioLanguage|":audiolanguage})
         medias = medias + plex.library.section(f"TV Shows").search(filters = {f"label!":excludedlabels,
-                                                                              f"contentRating":contentrating,
                                                                               f"audioLanguage|":audiolanguage})
         medias = medias + plex.library.section(f"Séries TV").search(filters = {f"label!":excludedlabels,
-                                                                               f"contentRating":contentrating,
                                                                                f"audioLanguage|":audiolanguage})
         labeled = False
         for media in medias:
-            labeled = True
-            media.addLabel(kidname,locked=False)
-            logging.info(f"Adding {kidname} label to : {media.title} in Library : {media.librarySectionTitle}")
-            message=f"{message}"+f"Label {kidname} added to : {media.title} in Library : {media.librarySectionTitle}\n"
+            label = False
+            if media.contentRating in contentrating:
+                label = True
+            elif media.commonSenseMedia != None:
+                if media.commonSenseMedia.ageRatings[0].age <= commonsenseage :
+                    label = True
+            if label == True:
+                labeled = True
+                media.addLabel(kidname,locked=False)
+                logging.info(f"Adding {kidname} label to : {media.title} in Library : {media.librarySectionTitle}")
+                message=f"{message}"+f"Label {kidname} added to : {media.title} in Library : {media.librarySectionTitle}\n"
     if labeled == False:
         logging.info(f"No media needed labeling")
     logging.info(f"Completed labeling")
