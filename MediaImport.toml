@@ -1,0 +1,15 @@
+# This is the configuration file for MediaImport
+
+title = "MediaImport configurations"
+
+[[Kid]]
+Name="John"
+ContentRating="G,PG,TV-G,TV-PG,TV-Y,ca/C,ca/F,ca/G,ca/C8,ca/PG,ca/TV-PG,ca/TV-Y7"
+AudioLanguage="French,french-canadian,Québécois"
+Excluded_Labels="ExcludeEnfants,ExcludeBastien"
+
+[[Kid]]
+Name="Jane"
+ContentRating="G,PG,TV-G,TV-PG,TV-Y,ca/C,ca/F,ca/G,ca/C8,ca/PG,ca/TV-PG,ca/TV-Y7"
+AudioLanguage="French,french-canadian,Québécois"
+Excluded_Labels="ExcludeEnfants,ExcludeCamille"
