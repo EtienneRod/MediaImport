@@ -3,13 +3,17 @@
 title = "MediaImport configurations"
 
 [[Kid]]
-Name="John"
-ContentRating="G,PG,TV-G,TV-PG,TV-Y,ca/C,ca/F,ca/G,ca/C8,ca/PG,ca/TV-PG,ca/TV-Y7"
-AudioLanguage="French,french-canadian,Québécois"
-Excluded_Labels="ExcludeEnfants,ExcludeBastien"
+Name = "John" # Kid Name
+BDay = 2022-04-25 # Birth Date
+CommonSenseAgeOffset = 2 # Offset for CommonSenseAge, can be positive or negative
+ContentRating = "G,PG,TV-G,TV-PG,TV-Y,ca/C,ca/F,ca/G,ca/C8,ca/PG,ca/TV-PG,ca/TV-Y7" # Allowed Content Rating
+AudioLanguage = "French,french-canadian,Québécois" # Allowed Language
+Excluded_Labels = "ExcludeEnfants,ExcludeBastien" # Excluded Labels
 
 [[Kid]]
-Name="Jane"
-ContentRating="G,PG,TV-G,TV-PG,TV-Y,ca/C,ca/F,ca/G,ca/C8,ca/PG,ca/TV-PG,ca/TV-Y7"
-AudioLanguage="French,french-canadian,Québécois"
-Excluded_Labels="ExcludeEnfants,ExcludeCamille"
+Name = "Jane" # Kid Name
+BDay = 2019-08-30 # Birth Date
+CommonSenseAgeOffset = 2 # Offset for CommonSenseAge, can be positive or negative
+ContentRating = "G,PG,TV-G,TV-PG,TV-Y,ca/C,ca/F,ca/G,ca/C8,ca/PG,ca/TV-PG,ca/TV-Y7" # Allowed Content Rating
+AudioLanguage = "French,french-canadian,Québécois" # Allowed Language
+Excluded_Labels = "ExcludeEnfants,ExcludeCamille" # Excluded Labels
