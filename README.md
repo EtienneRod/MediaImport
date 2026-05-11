@@ -3,6 +3,8 @@ import in Radarr.
 
 This use Webhooks from both Plex and Radarr in order to do so.
 
+You need to create a TOML configuration file, see the example in MediaImport.toml
+
 Here is an example of Docker-Compose (compose.yaml) to launch it :
 
 ```yaml
