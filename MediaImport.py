@@ -66,14 +66,10 @@ def labeling(plex, message):
         LabelConfig = tomllib.load(f)
     for kid in LabelConfig["Kid"]:
         kidname=kid["Name"]
-        logging.info(f"Kid Name : {kidname}")
         contentrating=kid["ContentRating"].split(',')
-        logging.info(f"Content Rating : {contentrating}")
         audiolanguage=kid["AudioLanguage"].split(',')
-        logging.info(f"Audio Language : {audiolanguage}")
         excludedlabels=kid["Excluded_Labels"].split(',')
         excludedlabels.append(kidname)
-        logging.info(f"Excluded Labels : {excludedlabels}")
         medias = []
         medias = medias + plex.library.section(f"Movies").search(filters = {f"label!":excludedlabels,
                                                                             f"contentRating":contentrating,
