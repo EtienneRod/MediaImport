@@ -2,7 +2,8 @@
 
 from flask import Flask, json, request
 from pushover_complete import PushoverAPI
-import logging, lzma, tarfile, os, shutil, subprocess, sys
+from datetime import date
+import logging, lzma, tarfile, os, shutil, subprocess, sys, tomllib
 
 
 # Set logging settings
@@ -17,21 +18,7 @@ plexToken=f"{os.environ.get('PLEX_TOKEN')}"
 pushoverKey=f"{os.environ.get('PUSHOVER_KEY')}"
 pushoverToken=f"{os.environ.get('PUSHOVER_TOKEN')}"
 flaskPort=f"{os.environ.get('FLASK_PORT')}"
-contentrating=f"{os.environ.get('CONTENT_RATING')}".split(',')
-commonsenseage=int(f"{os.environ.get('COMMONSENSE_AGE')}")
-audiolanguage=f"{os.environ.get('AUDIO_LANGUAGE')}".split(',')
-kidlabel=f"{os.environ.get('KID_LABEL')}"
-excludedlabels=f"{os.environ.get('EXCLUDED_LABELS')}".split(',')
-excludedlabels.append(f"{kidlabel}")
 vfqstrings=f"{os.environ.get('VFQ_STRINGS')}".split(',')
-
-# Log filtering Value
-logging.info(f"Content Ratings : {contentrating}")
-logging.info(f"Common Sense Age : {commonsenseage}")
-logging.info(f"Audio Language : {audiolanguage}")
-logging.info(f"Kid Label : {kidlabel}")
-logging.info(f"Excluded Labels : {excludedlabels}")
-logging.info(f"VFQ Strings : {vfqstrings}")
 
 # Define Flask
 app = Flask(__name__)
@@ -75,28 +62,37 @@ def removevff(media, message):
 def labeling(plex, message):
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting Labeling")
-  
-    medias = plex.library.section(f"Movies").search(filters = {f"label!":f"{excludedlabels}",
-                                                               f"audioLanguage|":f"{audiolanguage}"})
-    medias = medias + plex.library.section(f"Films").search(filters = {f"label!":f"{excludedlabels}",
-                                                                       f"audioLanguage|":f"{audiolanguage}"})
-    medias = medias + plex.library.section(f"TV Shows").search(filters = {f"label!":f"{excludedlabels}",
-                                                                          f"audioLanguage|":f"{audiolanguage}"})
-    medias = medias + plex.library.section(f"Séries TV").search(filters = {f"label!":f"{excludedlabels}",
-                                                                           f"audioLanguage|":f"{audiolanguage}"})
-    labeled = False
-    for media in medias:
-        label = False
-        if media.commonSenseMedia != None:
-            if media.commonSenseMedia.ageRatings[0].age <= commonsenseage or media.contentRating in contentrating:
-                label = True
-        elif media.contentRating in contentrating:
-            label = True
-        if label == True:
+    with open("config/MediaImport.toml", "rb") as f:
+    LabelConfig = tomllib.load(f)
+    for kid in LabelConfig["Kid"]:
+        kidname=kid["Name"]
+        logging.info(f"Kid Name : {kidname}")
+        contentrating=kid["ContentRating"].split(',')
+        logging.info(f"Content Rating : {contentrating}")
+        audiolanguage=kid["AudioLanguage"].split(',')
+        logging.info(f"Audio Language : {audiolanguage}")
+        excludedlabels=kid["Excluded_Labels"].split(',')
+        excludedlabels.append(kidname)
+        logging.info(f"Excluded Labels : {excludedlabels}")
+        medias = []
+        medias = medias + plex.library.section(f"Movies").search(filters = {f"label!":excludedlabels,
+                                                                            f"contentRating":contentrating,
+                                                                            f"audioLanguage|":audiolanguage})
+        medias = medias + plex.library.section(f"Films").search(filters = {f"label!":excludedlabels,
+                                                                           f"contentRating":contentrating,
+                                                                           f"audioLanguage|":audiolanguage})
+        medias = medias + plex.library.section(f"TV Shows").search(filters = {f"label!":excludedlabels,
+                                                                              f"contentRating":contentrating,
+                                                                              f"audioLanguage|":audiolanguage})
+        medias = medias + plex.library.section(f"Séries TV").search(filters = {f"label!":excludedlabels,
+                                                                               f"contentRating":contentrating,
+                                                                               f"audioLanguage|":audiolanguage})
+        labeled = False
+        for media in medias:
             labeled = True
-            media.addLabel("Enfants",locked=False)
-            logging.info(f"Adding Enfants label to : {media.title} in Library : {media.librarySectionTitle}")
-            message=f"{message}"+f"Label Enfants added to : {media.title} in Library : {media.librarySectionTitle}\n"
+            media.addLabel(kidname,locked=False)
+            logging.info(f"Adding {kidname} label to : {media.title} in Library : {media.librarySectionTitle}")
+            message=f"{message}"+f"Label {kidname} added to : {media.title} in Library : {media.librarySectionTitle}\n"
     if labeled == False:
         logging.info(f"No media needed labeling")
     logging.info(f"Completed labeling")
