@@ -63,7 +63,7 @@ def labeling(plex, message):
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting Labeling")
     with open("config/MediaImport.toml", "rb") as f:
-    LabelConfig = tomllib.load(f)
+        LabelConfig = tomllib.load(f)
     for kid in LabelConfig["Kid"]:
         kidname=kid["Name"]
         logging.info(f"Kid Name : {kidname}")
