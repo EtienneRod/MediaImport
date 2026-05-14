@@ -73,13 +73,13 @@ def labeling(plex, message):
         excludedlabels.append(kidname)
         medias = []
         medias = medias + plex.library.section(f"Movies").search(filters = {f"label!":excludedlabels,
-                                                                            f"audioLanguage|":audiolanguage})
+                                                                            f"audioLanguage__icontains|":audiolanguage})
         medias = medias + plex.library.section(f"Films").search(filters = {f"label!":excludedlabels,
-                                                                           f"audioLanguage|":audiolanguage})
+                                                                           f"audioLanguage__icontains|":audiolanguage})
         medias = medias + plex.library.section(f"TV Shows").search(filters = {f"label!":excludedlabels,
-                                                                              f"audioLanguage|":audiolanguage})
+                                                                              f"audioLanguage__icontains|":audiolanguage})
         medias = medias + plex.library.section(f"Séries TV").search(filters = {f"label!":excludedlabels,
-                                                                               f"audioLanguage|":audiolanguage})
+                                                                               f"audioLanguage__icontains|":audiolanguage})
         labeled = False
         for media in medias:
             label = False
