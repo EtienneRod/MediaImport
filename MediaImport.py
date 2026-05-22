@@ -34,12 +34,13 @@ def removevff(media, message):
     for stream in audio_streams:
         logging.info(f"Audio Title: {stream.title} - Language: {stream.languageCode}")
         if f"{stream.languageCode}" == f"fra" and f"{stream.title}":
-            logging.info(f"Audio Title: {stream.title} - VFQ Strings: {vfqstrings}")
-            if [vfqs for vfqs in vfqstrings if f"{stream.title}".casefold() in vfqs]:
-                vfq.append(f"{stream.index}")
-            else:
+            foundvfq=False
+            for vfqstring in vfqstrings:
+                if f"{vfqstring}" in f"{stream.title}":
+                  vfq.append(f"{stream.index}")
+                  foundvfq=true
+            if foundvfq == False
                 notvfq.append(f"{stream.index}")
-
     logging.info(f"VFQs: {vfq} - NotVFQs: {notvfq}")
     if vfq and notvfq:
         mapstring=""
