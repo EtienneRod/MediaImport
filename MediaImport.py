@@ -25,6 +25,7 @@ app = Flask(__name__)
 
 # Function removevff
 def removevff(media, message):
+    
     logging.info(f"------------------------------------------------------------")
     logging.info(f"Starting RemoveVFF")
     audio_streams = media.media[0].parts[0].audioStreams()
@@ -33,6 +34,8 @@ def removevff(media, message):
     for stream in audio_streams:
         logging.info(f"Audio Title: {stream.title} - Language: {stream.languageCode}")
         if f"{stream.languageCode}" == f"fra" and f"{stream.title}":
+            logging.info(f"Stream Lang.: {stream.title}".casefold())
+            logging.info(f"VFQ Strings: {vfqstrings}".casefold())
             if f"{stream.title}".casefold() in f"{vfqstrings}".casefold():
                 vfq.append(f"{stream.index}")
             else:
