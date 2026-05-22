@@ -36,10 +36,10 @@ def removevff(media, message):
         if f"{stream.languageCode}" == f"fra" and f"{stream.title}":
             foundvfq=False
             for vfqstring in vfqstrings:
-                if f"{vfqstring}" in f"{stream.title}":
+                if f"{vfqstring}" in f"{stream.title}".casefold():
                   vfq.append(f"{stream.index}")
                   foundvfq=true
-            if foundvfq == False
+            if foundvfq == False:
                 notvfq.append(f"{stream.index}")
     logging.info(f"VFQs: {vfq} - NotVFQs: {notvfq}")
     if vfq and notvfq:
