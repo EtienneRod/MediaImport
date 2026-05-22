@@ -41,7 +41,6 @@ def removevff(media, message):
                   foundvfq=True
             if foundvfq == False:
                 notvfq.append(f"{stream.index}")
-    logging.info(f"VFQs: {vfq} - NotVFQs: {notvfq}")
     if vfq and notvfq:
         mapstring=""
         for stream in notvfq:
