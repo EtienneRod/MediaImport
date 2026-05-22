@@ -18,7 +18,7 @@ plexToken=f"{os.environ.get('PLEX_TOKEN')}"
 pushoverKey=f"{os.environ.get('PUSHOVER_KEY')}"
 pushoverToken=f"{os.environ.get('PUSHOVER_TOKEN')}"
 flaskPort=f"{os.environ.get('FLASK_PORT')}"
-vfqstrings=f"{os.environ.get('VFQ_STRINGS')}".split(',')
+vfqstrings=f"{os.environ.get('VFQ_STRINGS')}".casefold().split(',')
 
 # Define Flask
 app = Flask(__name__)
@@ -35,7 +35,7 @@ def removevff(media, message):
         logging.info(f"Audio Title: {stream.title} - Language: {stream.languageCode}")
         if f"{stream.languageCode}" == f"fra" and f"{stream.title}":
             logging.info(f"Audio Title: {stream.title} - VFQ Strings: {vfqstrings}")
-            if [vfqs for vfqs in f"{vfqstrings}".casefold() if f"{stream.title}".casefold() in vfqs]:
+            if [vfqs for vfqs in vfqstrings if f"{stream.title}".casefold() in vfqs]:
                 vfq.append(f"{stream.index}")
             else:
                 notvfq.append(f"{stream.index}")
