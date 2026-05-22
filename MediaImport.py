@@ -38,7 +38,7 @@ def removevff(media, message):
             for vfqstring in vfqstrings:
                 if f"{vfqstring}" in f"{stream.title}".casefold():
                   vfq.append(f"{stream.index}")
-                  foundvfq=true
+                  foundvfq=True
             if foundvfq == False:
                 notvfq.append(f"{stream.index}")
     logging.info(f"VFQs: {vfq} - NotVFQs: {notvfq}")
